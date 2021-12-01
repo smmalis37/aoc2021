@@ -1,0 +1,16 @@
+[package]
+name = "aoc2021"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+paste = "1"
+criterion = "0.3"
+dhat = "0.2"
+lexical = "6"
+ahash = "0.7"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = 'abort'
