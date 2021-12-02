@@ -25,7 +25,8 @@ impl<'a> Solver<'a> for Day2 {
                 b'u' => (Direction::Up, &l[3..]),
                 _ => unreachable!(),
             })
-            .map(|(d, a)| (d, a.parse()))
+            .inspect(|(_, a)| debug_assert!(a.len() == 1 && (b'0'..=b'9').contains(&a[0])))
+            .map(|(d, a)| (d, (a[0] - b'0') as Num))
             .collect()
     }
 
