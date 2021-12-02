@@ -7,8 +7,12 @@ edition = "2021"
 paste = "1"
 criterion = "0.3"
 dhat = "0.2"
-lexical = "6"
 ahash = "0.7"
+
+[dependencies.lexical-core]
+version = "0.8"
+default-features = false
+features = ["parse-integers"]
 
 [profile.release]
 lto = true
