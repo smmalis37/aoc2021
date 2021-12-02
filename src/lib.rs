@@ -1,5 +1,6 @@
 #![feature(associated_type_defaults, array_windows)]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#![forbid(unsafe_code)]
 #![allow(
     clippy::wildcard_imports,
     clippy::default_trait_access,
