@@ -12,7 +12,7 @@ impl<'a> Solver<'a> for Day1 {
         input
             .as_bytes()
             .split(bytelines)
-            .map(|x| x.parse().unwrap())
+            .map(BStrParse::parse)
             .collect()
     }
 

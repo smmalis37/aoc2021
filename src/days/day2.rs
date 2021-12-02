@@ -11,30 +11,21 @@ pub enum Direction {
     Up,
 }
 
-#[derive(Clone, Copy)]
-pub struct Move {
-    dir: Direction,
-    amount: Num,
-}
-
 impl<'a> Solver<'a> for Day2 {
-    type Parsed = Vec<Move>;
+    type Parsed = Vec<(Direction, Num)>;
     type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
         input
             .as_bytes()
             .split(bytelines)
-            .map(|l| l.split(|&x| x == b' '))
-            .map(|mut l| Move {
-                dir: match l.next().unwrap()[0] {
-                    b'f' => Direction::Forward,
-                    b'd' => Direction::Down,
-                    b'u' => Direction::Up,
-                    _ => unreachable!(),
-                },
-                amount: l.next().unwrap().parse().unwrap(),
+            .map(|l| match l[0] {
+                b'f' => (Direction::Forward, &l[8..]),
+                b'd' => (Direction::Down, &l[5..]),
+                b'u' => (Direction::Up, &l[3..]),
+                _ => unreachable!(),
             })
+            .map(|(d, a)| (d, a.parse()))
             .collect()
     }
 
@@ -42,11 +33,11 @@ impl<'a> Solver<'a> for Day2 {
         let mut horiz = 0;
         let mut depth = 0;
 
-        for m in data {
-            match m.dir {
-                Direction::Forward => horiz += m.amount,
-                Direction::Down => depth += m.amount,
-                Direction::Up => depth -= m.amount,
+        for &(d, a) in &data {
+            match d {
+                Direction::Forward => horiz += a,
+                Direction::Down => depth += a,
+                Direction::Up => depth -= a,
             }
         }
 
@@ -58,14 +49,14 @@ impl<'a> Solver<'a> for Day2 {
         let mut depth = 0;
         let mut aim = 0;
 
-        for m in data {
-            match m.dir {
+        for &(d, a) in &data {
+            match d {
                 Direction::Forward => {
-                    horiz += m.amount;
-                    depth += aim * m.amount;
+                    horiz += a;
+                    depth += aim * a;
                 }
-                Direction::Down => aim += m.amount,
-                Direction::Up => aim -= m.amount,
+                Direction::Down => aim += a,
+                Direction::Up => aim -= a,
             }
         }
 
