@@ -11,21 +11,28 @@ impl<'a> Solver<'a> for Day3 {
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
+        let mut counts = vec![0; data[0].len()];
         let half_count = data.len() / 2;
+
+        for l in data {
+            for (digit, count) in l.iter().zip(counts.iter_mut()) {
+                *count += (digit - b'0') as u16;
+            }
+        }
+
         let mut gamma = 0;
         let mut epsilon = 0;
 
-        for i in 0..data[0].len() {
+        for c in counts {
             gamma <<= 1;
             epsilon <<= 1;
 
-            if data.iter().map(|l| (l[i] - b'0') as u16).sum::<u16>() as usize > half_count {
-                gamma += 1;
-            } else {
-                epsilon += 1;
-            }
+            let res = c as usize > half_count;
+
+            gamma += res as u32;
+            epsilon += !res as u32;
         }
-        
+
         gamma * epsilon
     }
 
