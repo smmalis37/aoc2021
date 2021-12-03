@@ -3,43 +3,34 @@ use crate::{solver::Solver, util::*};
 pub struct Day3;
 
 impl<'a> Solver<'a> for Day3 {
-    type Parsed = impl Iterator<Item = &'a [u8]> + Clone;
+    type Parsed = Vec<&'a [u8]>;
     type Output = u32;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        input.as_bytes().split(bytelines)
+        input.as_bytes().split(bytelines).collect()
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
-        let first = data.clone().next().unwrap();
-        let mut counts = vec![0; first.len()];
-        let mut line_count = 0;
-
-        for l in data {
-            line_count += 1;
-            for (digit, count) in l.iter().zip(counts.iter_mut()) {
-                *count += (digit - b'0') as u16;
-            }
-        }
-
-        let half_count = line_count / 2;
+        let half_count = data.len() / 2;
         let mut gamma = 0;
         let mut epsilon = 0;
 
-        for c in counts {
+        for i in 0..data[0].len() {
             gamma <<= 1;
             epsilon <<= 1;
-            if c > half_count {
+
+            if data.iter().map(|l| (l[i] - b'0') as u16).sum::<u16>() as usize > half_count {
                 gamma += 1;
             } else {
                 epsilon += 1;
             }
         }
-
+        
         gamma * epsilon
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
+        // sort, go to midpoint, find range, repeat
         todo!()
     }
 }
