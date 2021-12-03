@@ -1,4 +1,9 @@
-#![feature(associated_type_defaults, type_alias_impl_trait, array_windows)]
+#![feature(
+    associated_type_defaults,
+    type_alias_impl_trait,
+    array_windows,
+    destructuring_assignment
+)]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #![forbid(unsafe_code)]
 #![allow(

@@ -1,4 +1,4 @@
-use crate::{solver::Solver, util::*};
+use crate::solver::Solver;
 
 pub struct Day1;
 
@@ -9,11 +9,19 @@ impl<'a> Solver<'a> for Day1 {
     type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        input
-            .as_bytes()
-            .split(bytelines)
-            .map(BStrParse::parse)
-            .collect()
+        let mut res = Vec::with_capacity(input.len());
+        let mut input = input.as_bytes();
+        let mut size = 0;
+
+        while size < input.len() {
+            input = &input[size..];
+            let num;
+            (num, size) = lexical_core::parse_partial(input).unwrap();
+            size += 1;
+            res.push(num);
+        }
+
+        res
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {

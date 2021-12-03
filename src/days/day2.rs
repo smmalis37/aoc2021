@@ -1,4 +1,4 @@
-use crate::{solver::Solver, util::*};
+use crate::solver::Solver;
 
 pub struct Day2;
 
@@ -16,18 +16,26 @@ impl<'a> Solver<'a> for Day2 {
     type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        input
-            .as_bytes()
-            .split(bytelines)
-            .map(|l| match l[0] {
-                b'f' => (Direction::Forward, &l[8..]),
-                b'd' => (Direction::Down, &l[5..]),
-                b'u' => (Direction::Up, &l[3..]),
+        let mut input = input.as_bytes().iter();
+        let mut res = Vec::with_capacity(input.len() / "up #\n".len());
+
+        while let Some(d) = input.next() {
+            let (dir, pos) = match d {
+                b'f' => (Direction::Forward, "forward".len()),
+                b'd' => (Direction::Down, "down".len()),
+                b'u' => (Direction::Up, "up".len()),
                 _ => unreachable!(),
-            })
-            .inspect(|(_, a)| debug_assert!(a.len() == 1 && (b'0'..=b'9').contains(&a[0])))
-            .map(|(d, a)| (d, (a[0] - b'0') as Num))
-            .collect()
+            };
+            input.nth(pos - 1);
+
+            let num = input.next().unwrap();
+            let amount = (num - b'0') as Num;
+
+            input.next();
+            res.push((dir, amount));
+        }
+
+        res
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {

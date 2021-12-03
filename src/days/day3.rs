@@ -1,4 +1,4 @@
-use crate::{solver::Solver, util::*};
+use crate::solver::Solver;
 
 pub struct Day3;
 
@@ -8,7 +8,7 @@ impl<'a> Solver<'a> for Day3 {
 
     fn parse(input: &'a str) -> Self::Parsed {
         let len = memchr::memchr(b'\n', input.as_bytes()).unwrap();
-        (len, input.as_bytes().chunks(len + 1))
+        (len, input.as_bytes().chunks_exact(len + 1))
     }
 
     fn part1((len, data): Self::Parsed) -> Self::Output {
