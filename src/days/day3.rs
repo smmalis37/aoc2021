@@ -3,23 +3,26 @@ use crate::{solver::Solver, util::*};
 pub struct Day3;
 
 impl<'a> Solver<'a> for Day3 {
-    type Parsed = Vec<&'a [u8]>;
+    type Parsed = (usize, impl Iterator<Item = &'a [u8]> + Clone);
     type Output = u32;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        input.as_bytes().split(bytelines).collect()
+        let len = memchr::memchr(b'\n', input.as_bytes()).unwrap();
+        (len, input.as_bytes().chunks(len + 1))
     }
 
-    fn part1(data: Self::Parsed) -> Self::Output {
-        let mut counts = [0; 12];
-        let half_count = data.len() / 2;
+    fn part1((len, data): Self::Parsed) -> Self::Output {
+        let mut counts = vec![0; len];
+        let mut line_count = 0;
 
         for l in data {
+            line_count += 1;
             for (digit, count) in l.iter().zip(counts.iter_mut()) {
                 *count += (digit - b'0') as u16;
             }
         }
 
+        let half_count = line_count / 2;
         let mut gamma = 0;
         let mut epsilon = 0;
 

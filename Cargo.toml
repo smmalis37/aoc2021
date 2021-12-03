@@ -4,6 +4,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
+memchr = "2.4"
 paste = "1"
 criterion = "0.3"
 dhat = "0.2"
