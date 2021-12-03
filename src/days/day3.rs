@@ -11,9 +11,7 @@ impl<'a> Solver<'a> for Day3 {
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
-        let len = data[0].len();
-        assert!(len <= 16);
-        let mut counts = vec![0; len];
+        let mut counts = [0; 12];
         let half_count = data.len() / 2;
 
         for l in data {
