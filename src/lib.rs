@@ -2,7 +2,8 @@
     associated_type_defaults,
     type_alias_impl_trait,
     array_windows,
-    destructuring_assignment
+    destructuring_assignment,
+    mixed_integer_ops
 )]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #![forbid(unsafe_code)]
