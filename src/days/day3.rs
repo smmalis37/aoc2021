@@ -46,66 +46,42 @@ impl<'a> Solver<'a> for Day3 {
         let mut data: Vec<_> = data.collect();
         data.sort_unstable();
 
-        let mut o2ratings = &data[..];
-        let mut o2rating = 0;
-        let mut co2ratings = &data[..];
-        let mut co2rating = 0;
+        let mut res = 1;
 
-        for i in 0..len {
-            let mut pos = o2ratings.len() / 2;
-            let bit = o2ratings[pos][i];
-            let incr = match bit {
-                b'0' => 1,
-                b'1' => -1,
-                _ => unreachable!(),
-            };
+        for (x, y1, y2, z2) in [(b'1', b'0', 0, 1), (b'0', b'1', 1, 0)] {
+            let mut ratings = &data[..];
+            let mut rating = 0;
+            for i in 0..len {
+                let mut pos = ratings.len() / 2;
+                let bit = ratings[pos][i];
+                let incr = match bit {
+                    b'0' => 1,
+                    b'1' => -1,
+                    _ => unreachable!(),
+                };
 
-            o2rating <<= 1;
-            o2rating += (bit == b'1') as u32;
+                rating <<= 1;
+                rating += if ratings.len() == 1 {
+                    (bit - b'0') as u32
+                } else {
+                    (bit == x) as u32
+                };
 
-            while o2ratings[pos][i] == bit {
-                pos = pos.wrapping_add_signed(incr);
+                while ratings[pos][i] == bit && pos > 0 && pos < ratings.len() {
+                    pos = pos.wrapping_add_signed(incr);
+                }
+
+                ratings = if bit == y1 {
+                    &ratings[..pos + y2]
+                } else {
+                    &ratings[pos + z2..]
+                };
             }
 
-            o2ratings = match bit {
-                b'0' => &o2ratings[..pos],
-                b'1' => &o2ratings[pos + 1..],
-                _ => unreachable!(),
-            }
+            res *= rating;
         }
 
-        for i in 0..len {
-            println!("{:?}", co2ratings);
-            let mut pos = co2ratings.len() / 2;
-            let bit = co2ratings[pos][i];
-            let incr = match bit {
-                b'0' => 1,
-                b'1' => -1,
-                _ => unreachable!(),
-            };
-
-            co2rating <<= 1;
-            co2rating += if co2ratings.len() == 1 {
-                (bit - b'0') as u32
-            } else {
-                (bit == b'0') as u32
-            };
-            println!("{:b}", co2rating);
-
-            while co2ratings[pos][i] == bit && pos > 0 && pos < co2ratings.len() {
-                pos = pos.wrapping_add_signed(incr);
-            }
-
-            co2ratings = match bit {
-                b'0' => &co2ratings[pos..],
-                b'1' => &co2ratings[..=pos],
-                _ => unreachable!(),
-            }
-        }
-
-        println!("{} {}", o2rating, co2rating);
-
-        o2rating * co2rating
+        res
     }
 }
 
