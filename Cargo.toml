@@ -13,7 +13,7 @@ ahash = "0.7"
 [dependencies.lexical-core]
 version = "0.8"
 default-features = false
-features = ["parse-integers"]
+features = ["parse-integers", "power-of-two"]
 
 [profile.release]
 lto = true

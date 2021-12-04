@@ -4,7 +4,7 @@ pub struct Day3;
 
 impl<'a> Solver<'a> for Day3 {
     type Parsed = (usize, impl Iterator<Item = &'a [u8]> + Clone);
-    type Output = u32;
+    type Output = usize;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let len = memchr::memchr(b'\n', input.as_bytes()).unwrap();
@@ -33,55 +33,61 @@ impl<'a> Solver<'a> for Day3 {
             gamma <<= 1;
             epsilon <<= 1;
 
-            let res = c as usize > half_count;
+            let res = c > half_count;
 
-            gamma += res as u32;
-            epsilon += !res as u32;
+            gamma += res as Self::Output;
+            epsilon += !res as Self::Output;
         }
 
         gamma * epsilon
     }
 
     fn part2((len, data): Self::Parsed) -> Self::Output {
-        let mut data: Vec<_> = data.collect();
-        data.sort_unstable();
+        let mut line_count = 0;
+        let mut counts = vec![0u16; 1 << len];
 
-        let mut res = 1;
-
-        for (x, y1, y2, z2) in [(b'1', b'0', 0, 1), (b'0', b'1', 1, 0)] {
-            let mut ratings = &data[..];
-            let mut rating = 0;
-            for i in 0..len {
-                let mut pos = ratings.len() / 2;
-                let bit = ratings[pos][i];
-                let incr = match bit {
-                    b'0' => 1,
-                    b'1' => -1,
-                    _ => unreachable!(),
-                };
-
-                rating <<= 1;
-                rating += if ratings.len() == 1 {
-                    (bit - b'0') as u32
-                } else {
-                    (bit == x) as u32
-                };
-
-                while ratings[pos][i] == bit && pos > 0 && pos < ratings.len() {
-                    pos = pos.wrapping_add_signed(incr);
-                }
-
-                ratings = if bit == y1 {
-                    &ratings[..pos + y2]
-                } else {
-                    &ratings[pos + z2..]
-                };
-            }
-
-            res *= rating;
+        for l in data {
+            line_count += 1;
+            counts[l.parse_binary::<usize>()] += 1;
         }
 
-        res
+        let mut offset_most = 0;
+        let mut offset_least = 0;
+        let mut total_most = line_count;
+        let mut total_least = line_count;
+        let mut size = 1 << len;
+
+        for _ in 0..len {
+            size /= 2;
+            let (mut most0, mut least0) = (0, 0);
+
+            for j in 0..size {
+                most0 += counts[offset_most + j];
+                least0 += counts[offset_least + j];
+            }
+
+            let most1 = total_most - most0;
+            let least1 = total_least - least0;
+
+            total_most = if most1 >= most0 {
+                offset_most += size;
+                most1
+            } else {
+                most0
+            };
+
+            total_least = if least0 != 0 && (least0 <= least1 || least1 == 0) {
+                least0
+            } else {
+                offset_least += size;
+                least1
+            };
+        }
+
+        debug_assert!(counts[offset_most] != 0);
+        debug_assert!(counts[offset_least] != 0);
+
+        offset_most * offset_least
     }
 }
 
