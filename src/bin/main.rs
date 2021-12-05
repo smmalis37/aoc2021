@@ -43,16 +43,15 @@ fn solve<O, O2, S: for<'a> Solver<'a, Output = O, Output2 = O2>>(
     part2_output: Option<O2>,
 ) {
     let input = std::fs::read_to_string(format!("input/{}/day{}.txt", YEAR, day_number)).unwrap();
-    let trimmed = input.trim();
 
     let mut args = std::env::args();
     if args.len() > 1 {
         let day_as_str = day_number.to_string();
         if args.any(|x| x == day_as_str || x == "a") {
-            bench::<S>(day_number, trimmed);
+            bench::<S>(day_number, &input);
         }
     } else {
-        run::<S>(day_number, trimmed, part1_output, part2_output);
+        run::<S>(day_number, &input, part1_output, part2_output);
     }
 }
 
