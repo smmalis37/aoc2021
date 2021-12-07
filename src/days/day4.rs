@@ -32,15 +32,15 @@ impl<'a> Solver<'a> for Day4 {
             }
         }
 
-        let board_input = &input[line_length + 2..];
+        let board_input = &input[line_length + 1..];
         let board_char_count = BOARD_SIZE * 3 + 1;
-        let board_count = board_input.len() / board_char_count + 1;
+        let board_count = board_input.len() / board_char_count;
         let mut boards = vec![Board::default(); board_count];
         let mut index: Index = vec![[None; 100]; board_count];
 
-        for (i, b) in board_input.chunks(board_char_count).enumerate() {
+        for (i, b) in board_input.chunks_exact(board_char_count).enumerate() {
             let mut pos = 0;
-            for c in b.chunks_exact(3) {
+            for c in b[1..].chunks_exact(3) {
                 match c {
                     [a @ b'0'..=b'9', b @ b'0'..=b'9', b' ' | b'\n'] => {
                         let num = (a - b'0') * 10 + (b - b'0');
