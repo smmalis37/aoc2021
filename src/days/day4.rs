@@ -2,16 +2,19 @@ use crate::solver::Solver;
 
 pub struct Day4;
 
-pub type Board = [[u8; 5]; 5];
+const ROW_SIZE: usize = 5;
+const BOARD_SIZE: usize = ROW_SIZE * ROW_SIZE;
+pub type Board = [u8; BOARD_SIZE];
+pub type Index = Vec<[Option<u8>; 100]>;
 
 impl<'a> Solver<'a> for Day4 {
-    type Parsed = (Vec<u8>, Vec<Board>);
+    type Parsed = (Vec<u8>, Vec<Board>, Index);
     type Output = u16;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let input = input.as_bytes();
         let line_length = memchr::memchr(b'\n', input).unwrap();
-        let mut calls = Vec::with_capacity(line_length / "##,".len());
+        let mut calls = Vec::with_capacity(line_length / 2);
 
         let mut num = 0;
         for c in &input[..=line_length] {
@@ -24,108 +27,96 @@ impl<'a> Solver<'a> for Day4 {
                     num = 0;
                 }
                 _ => {
-                    unreachable!();
+                    //unreachable!();
                 }
             }
         }
 
-        let mut boards = Vec::with_capacity(input.len() / 75);
+        let board_input = &input[line_length + 2..];
+        let board_char_count = BOARD_SIZE * 3 + 1;
+        let board_count = board_input.len() / board_char_count + 1;
+        let mut boards = vec![Board::default(); board_count];
+        let mut index: Index = vec![[None; 100]; board_count];
 
-        for b in input[line_length + 2..].chunks(76) {
-            let mut board = Board::default();
-            let mut output = board.iter_mut().flatten();
+        for (i, b) in board_input.chunks(board_char_count).enumerate() {
+            let mut pos = 0;
             for c in b.chunks_exact(3) {
                 match c {
-                    [x @ b'0'..=b'9', y @ b'0'..=b'9', b' ' | b'\n'] => {
-                        *output.next().unwrap() = (x - b'0') * 10 + (y - b'0');
+                    [a @ b'0'..=b'9', b @ b'0'..=b'9', b' ' | b'\n'] => {
+                        let num = (a - b'0') * 10 + (b - b'0');
+                        boards[i][pos as usize] = num;
+                        index[i][num as usize] = Some(pos);
+                        pos += 1;
                     }
-                    [b' ', y @ b'0'..=b'9', b' ' | b'\n'] => {
-                        *output.next().unwrap() = y - b'0';
+                    [b' ', b @ b'0'..=b'9', b' ' | b'\n'] => {
+                        let num = b - b'0';
+                        boards[i][pos as usize] = num;
+                        index[i][num as usize] = Some(pos);
+                        pos += 1;
                     }
                     _ => {
-                        unreachable!();
+                        //unreachable!();
                     }
                 }
             }
-            boards.push(board);
         }
 
-        (calls, boards)
+        (calls, boards, index)
     }
 
-    fn part1((calls, boards): Self::Parsed) -> Self::Output {
-        let mut called = vec![[[false; 5]; 5]; boards.len()];
+    fn part1(data: Self::Parsed) -> Self::Output {
+        solve(data, |_| true)
+    }
 
-        let (winner, last_call) = 'w: {
-            for c in calls {
-                for i in 0..called.len() {
-                    for x in 0..5 {
-                        for y in 0..5 {
-                            if boards[i][x][y] == c {
-                                called[i][x][y] = true;
+    fn part2(data: Self::Parsed) -> Self::Output {
+        let mut won = vec![false; data.1.len()];
 
-                                if called[i].iter().all(|r| r[y]) || called[i][x].iter().all(|x| *x)
-                                {
-                                    break 'w (i, c);
-                                }
-                            }
-                        }
-                    }
+        solve(data, |i| {
+            won[i] = true;
+            won.iter().all(|x| *x)
+        })
+    }
+}
+
+fn solve(
+    (calls, boards, index): <Day4 as Solver>::Parsed,
+    mut break_time: impl FnMut(usize) -> bool,
+) -> u16 {
+    let mut called = vec![[false; BOARD_SIZE]; boards.len()];
+
+    let (winner, last_call) = 'w: {
+        for c in calls {
+            for (i, pos) in index
+                .iter()
+                .enumerate()
+                .filter_map(|(i, r)| r[c as usize].map(|x| (i, x)))
+            {
+                let pos = pos as usize;
+                debug_assert!(boards[i][pos] == c);
+                called[i][pos] = true;
+
+                let row = pos / ROW_SIZE;
+                let col = pos % ROW_SIZE;
+                if (called[i].chunks_exact(ROW_SIZE).all(|r| r[col])
+                    || called[i][row * ROW_SIZE..(row + 1) * ROW_SIZE]
+                        .iter()
+                        .all(|x| *x))
+                    && break_time(i)
+                {
+                    break 'w (i, c);
                 }
             }
-            unreachable!()
-        };
+        }
+        unreachable!()
+    };
 
-        boards[winner]
-            .iter()
-            .flatten()
-            .zip(called[winner].iter().flatten())
-            .filter(|(_, &called)| !called)
-            .map(|(&num, _)| num as u16)
-            .sum::<u16>()
-            * (last_call as u16)
-    }
-
-    fn part2((calls, boards): Self::Parsed) -> Self::Output {
-        let mut called = vec![[[false; 5]; 5]; boards.len()];
-        let mut won = vec![false; boards.len()];
-
-        let (winner, last_call) = 'w: {
-            for c in calls {
-                for i in 0..called.len() {
-                    if !won[i] {
-                        for x in 0..5 {
-                            for y in 0..5 {
-                                if boards[i][x][y] == c {
-                                    called[i][x][y] = true;
-
-                                    if called[i].iter().all(|r| r[y])
-                                        || called[i][x].iter().all(|x| *x)
-                                    {
-                                        won[i] = true;
-
-                                        if won.iter().all(|&x| x) {
-                                            break 'w (i, c);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            unreachable!()
-        };
-
-        boards[winner]
-            .iter()
-            .flatten()
-            .zip(called[winner].iter().flatten())
-            .filter(|(_, &called)| !called)
-            .map(|(&num, _)| num as u16)
-            .sum::<u16>()
-            * (last_call as u16)
-    }
+    boards[winner]
+        .iter()
+        .zip(called[winner].iter())
+        .filter(|(_, &called)| !called)
+        .map(|(&num, _)| num as u16)
+        .sum::<u16>()
+        * (last_call as u16)
 }
 
 #[cfg(test)]
