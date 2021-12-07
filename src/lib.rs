@@ -3,7 +3,8 @@
     type_alias_impl_trait,
     array_windows,
     destructuring_assignment,
-    mixed_integer_ops
+    mixed_integer_ops,
+    label_break_value
 )]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #![forbid(unsafe_code)]
