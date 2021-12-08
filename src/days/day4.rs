@@ -78,6 +78,7 @@ impl<'a> Solver<'a> for Day4 {
     }
 }
 
+#[inline]
 fn solve(
     (calls, boards, index): <Day4 as Solver>::Parsed,
     mut break_time: impl FnMut(usize) -> bool,

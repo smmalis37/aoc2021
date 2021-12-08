@@ -33,6 +33,7 @@ impl<'a> Solver<'a> for Day1 {
     }
 }
 
+#[inline]
 fn solve<'a, const N: usize>(data: &<Day1 as Solver>::Parsed) -> <Day1 as Solver<'a>>::Output {
     data.array_windows::<N>()
         .filter(|x| x[N - 1] > x[0])
