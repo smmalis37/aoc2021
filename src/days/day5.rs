@@ -45,7 +45,7 @@ impl<'a> Solver<'a> for Day5 {
             }
         }
 
-        grid.iter().flatten().filter(|&&x| x > 1).count()
+        grid.into_iter().flatten().filter(|&x| x > 1).count()
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
@@ -79,7 +79,7 @@ impl<'a> Solver<'a> for Day5 {
             }
         }
 
-        grid.iter().flatten().filter(|&&x| x > 1).count()
+        grid.into_iter().flatten().filter(|&x| x > 1).count()
     }
 }
 

@@ -120,10 +120,10 @@ fn solve(
     };
 
     boards[winner]
-        .iter()
-        .zip(called[winner].iter())
-        .filter(|(_, &called)| !called)
-        .map(|(&num, _)| num as u16)
+        .into_iter()
+        .zip(called[winner].into_iter())
+        .filter(|(_, called)| !called)
+        .map(|(num, _)| num as u16)
         .sum::<u16>()
         * (last_call as u16)
 }

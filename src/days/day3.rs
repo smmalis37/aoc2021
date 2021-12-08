@@ -29,7 +29,7 @@ impl<'a> Solver<'a> for Day3 {
         let mut gamma = 0;
         let mut epsilon = 0;
 
-        for c in counts {
+        for &c in &counts {
             gamma <<= 1;
             epsilon <<= 1;
 

@@ -39,8 +39,8 @@ impl<'a> Solver<'a> for Day7 {
             .sum::<Self::Output>()
             .unstable_div_floor(data.len() as Self::Output);
 
-        data.iter()
-            .flat_map(|&x| 1..=(mean.abs_diff(x as Self::Output)))
+        data.into_iter()
+            .flat_map(|x| 1..=(mean.abs_diff(x as Self::Output)))
             .sum()
     }
 }
