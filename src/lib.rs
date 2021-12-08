@@ -11,7 +11,8 @@
 #![allow(
     clippy::wildcard_imports,
     clippy::default_trait_access,
-    clippy::cast_lossless
+    clippy::cast_lossless,
+    clippy::unreadable_literal
 )]
 
 pub mod days;
