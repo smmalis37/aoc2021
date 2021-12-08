@@ -65,15 +65,15 @@ impl<'a> Solver<'a> for Day4 {
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
-        solve(data, |_| true)
+        solve(data, || true)
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
-        let mut won = vec![false; data.1.len()];
-
-        solve(data, |i| {
-            won[i] = true;
-            won.iter().all(|x| *x)
+        let mut count = 0;
+        let done = data.1.len();
+        solve(data, || {
+            count += 1;
+            count == done
         })
     }
 }
@@ -81,9 +81,10 @@ impl<'a> Solver<'a> for Day4 {
 #[inline]
 fn solve(
     (calls, boards, index): <Day4 as Solver>::Parsed,
-    mut break_time: impl FnMut(usize) -> bool,
+    mut break_time: impl FnMut() -> bool,
 ) -> u16 {
     let mut called = vec![[false; BOARD_SIZE]; boards.len()];
+    let mut won = vec![false; boards.len()];
 
     let (winner, last_call) = 'w: {
         for c in calls {
@@ -92,19 +93,26 @@ fn solve(
                 .enumerate()
                 .filter_map(|(i, r)| r[c as usize].map(|x| (i, x)))
             {
+                if won[i] {
+                    continue;
+                }
+
                 let pos = pos as usize;
                 debug_assert!(boards[i][pos] == c);
                 called[i][pos] = true;
 
                 let row = pos / ROW_SIZE;
                 let col = pos % ROW_SIZE;
-                if (called[i].chunks_exact(ROW_SIZE).all(|r| r[col])
+                if called[i].chunks_exact(ROW_SIZE).all(|r| r[col])
                     || called[i][row * ROW_SIZE..(row + 1) * ROW_SIZE]
                         .iter()
-                        .all(|x| *x))
-                    && break_time(i)
+                        .all(|x| *x)
                 {
-                    break 'w (i, c);
+                    won[i] = true;
+
+                    if break_time() {
+                        break 'w (i, c);
+                    }
                 }
             }
         }
