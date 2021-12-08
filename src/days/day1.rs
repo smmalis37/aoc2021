@@ -9,7 +9,7 @@ impl<'a> Solver<'a> for Day1 {
     type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        let mut res = Vec::with_capacity(input.len());
+        let mut res = Vec::with_capacity(input.len() / 2);
         let mut input = input.as_bytes();
 
         while !input.is_empty() {

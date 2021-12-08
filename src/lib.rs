@@ -4,7 +4,9 @@
     array_windows,
     destructuring_assignment,
     mixed_integer_ops,
-    label_break_value
+    label_break_value,
+    int_abs_diff,
+    int_roundings
 )]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #![forbid(unsafe_code)]
