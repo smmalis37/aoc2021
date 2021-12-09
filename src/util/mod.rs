@@ -23,3 +23,55 @@ impl BStrParse for [u8] {
 pub const fn bytelines(&x: &u8) -> bool {
     x == b'\n'
 }
+
+#[derive(Clone)]
+pub struct Grid<T> {
+    data: Vec<T>,
+    line_length: usize,
+    line_count: usize,
+}
+
+impl<T> std::ops::Index<usize> for Grid<T> {
+    type Output = [T];
+
+    #[inline]
+    fn index(&self, i: usize) -> &Self::Output {
+        let start = i * self.line_length;
+        &self.data[start..start + self.line_length]
+    }
+}
+
+impl<T> std::ops::IndexMut<usize> for Grid<T> {
+    #[inline]
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        let start = i * self.line_length;
+        &mut self.data[start..start + self.line_length]
+    }
+}
+
+impl<T> Grid<T> {
+    pub fn from_vec(data: Vec<T>, line_length: usize, line_count: usize) -> Self {
+        debug_assert!(data.len() == line_length * line_count);
+        Self {
+            data,
+            line_length,
+            line_count,
+        }
+    }
+
+    #[inline]
+    pub fn get(&self, i: usize) -> Option<&[T]> {
+        i.checked_mul(self.line_length)
+            .and_then(|start| self.data.get(start..start + self.line_length))
+    }
+
+    #[inline]
+    pub const fn line_count(&self) -> usize {
+        self.line_count
+    }
+
+    #[inline]
+    pub const fn line_length(&self) -> usize {
+        self.line_length
+    }
+}
