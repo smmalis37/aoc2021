@@ -47,11 +47,11 @@ mod tests {
 
     #[test]
     fn d6p1() {
-        assert_eq!(Day6::part1(Day6::parse("3,4,3,1,2")), 5934);
+        assert_eq!(Day6::part1(Day6::parse("3,4,3,1,2 ")), 5934);
     }
 
     #[test]
     fn d6p2() {
-        assert_eq!(Day6::part2(Day6::parse("3,4,3,1,2")), 26984457539);
+        assert_eq!(Day6::part2(Day6::parse("3,4,3,1,2 ")), 26984457539);
     }
 }
