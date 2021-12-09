@@ -36,14 +36,14 @@ impl<'a> Solver<'a> for Day8 {
         data.into_iter()
             .flat_map(|(_, outputs)| outputs)
             .filter(|o| [2, 3, 4, 7].contains(&o.count_ones()))
-            .count()
+            .count() as Self::Output
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
         let mut sum = 0;
         for (digits, output) in data {
-            let (mut d0, mut d1, mut d2, mut d3, mut d4, mut d5, mut d6, mut d7, mut d8, mut d9) =
-                Default::default();
+            let [mut d0, mut d1, mut d2, mut d3, mut d4, mut d5, mut d6, mut d7, mut d8, mut d9] =
+                [0u8; 10];
 
             for (d, i) in digits.iter().zip(0..) {
                 match d.count_ones() {
@@ -56,13 +56,13 @@ impl<'a> Solver<'a> for Day8 {
             }
 
             for (d, i) in digits.iter().zip(0..) {
-                match (d ^ digits[d1]).count_ones() {
+                match (d ^ digits[d1 as usize]).count_ones() {
                     3 => d3 = i,
                     6 => d6 = i,
                     _ => {}
                 }
 
-                match (d ^ digits[d4]).count_ones() {
+                match (d ^ digits[d4 as usize]).count_ones() {
                     5 => d2 = i,
                     2 if i != d1 => d9 = i,
                     _ => {}
@@ -70,7 +70,7 @@ impl<'a> Solver<'a> for Day8 {
             }
 
             for (d, i) in digits.iter().zip(0..) {
-                match (d ^ digits[d6]).count_ones() {
+                match (d ^ digits[d6 as usize]).count_ones() {
                     1 if i != d8 => d5 = i,
                     2 if i != d9 => d0 = i,
                     _ => {}
@@ -80,7 +80,7 @@ impl<'a> Solver<'a> for Day8 {
             let map = [d0, d1, d2, d3, d4, d5, d6, d7, d8, d9];
             let mut res = 0;
             for &o in &output {
-                let digit = map.iter().position(|&x| digits[x] == o).unwrap();
+                let digit = map.iter().position(|&x| digits[x as usize] == o).unwrap();
                 res = (res * 10) + digit;
             }
             sum += res;
