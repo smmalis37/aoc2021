@@ -2,8 +2,6 @@ use crate::solver::Solver;
 
 pub struct Day2;
 
-type Num = u32;
-
 #[derive(Clone, Copy)]
 pub enum Direction {
     Forward,
@@ -12,8 +10,8 @@ pub enum Direction {
 }
 
 impl<'a> Solver<'a> for Day2 {
-    type Parsed = Vec<(Direction, Num)>;
-    type Output = Num;
+    type Parsed = Vec<(Direction, u8)>;
+    type Output = u32;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let mut input = input.as_bytes().iter();
@@ -29,7 +27,7 @@ impl<'a> Solver<'a> for Day2 {
             input.nth(pos - 1);
 
             let num = input.next().unwrap();
-            let amount = (num - b'0') as Num;
+            let amount = num - b'0';
 
             input.next();
             res.push((dir, amount));
@@ -43,6 +41,7 @@ impl<'a> Solver<'a> for Day2 {
         let mut depth = 0;
 
         for &(d, a) in &data {
+            let a = a as Self::Output;
             match d {
                 Direction::Forward => horiz += a,
                 Direction::Down => depth += a,
@@ -59,6 +58,7 @@ impl<'a> Solver<'a> for Day2 {
         let mut aim = 0;
 
         for &(d, a) in &data {
+            let a = a as Self::Output;
             match d {
                 Direction::Forward => {
                     horiz += a;

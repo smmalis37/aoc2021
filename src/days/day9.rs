@@ -46,8 +46,8 @@ impl<'a> Solver<'a> for Day9 {
     }
 
     fn part2(mut data: Self::Parsed) -> Self::Output {
-        let mut stack = Vec::new();
-        let mut basins = BinaryHeap::new();
+        let mut stack = Vec::with_capacity(data.line_length());
+        let mut basins = BinaryHeap::with_capacity(data.line_length());
 
         for r in 0..data.line_count() {
             for c in 0..data.line_length() {

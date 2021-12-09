@@ -6,7 +6,7 @@ type Num = u16;
 
 impl<'a> Solver<'a> for Day1 {
     type Parsed = Vec<Num>;
-    type Output = Num;
+    type Output = usize;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let mut res = Vec::with_capacity(input.len() / 2);
@@ -34,7 +34,7 @@ impl<'a> Solver<'a> for Day1 {
 fn solve<'a, const N: usize>(data: &<Day1 as Solver>::Parsed) -> <Day1 as Solver<'a>>::Output {
     data.array_windows::<N>()
         .filter(|x| x[N - 1] > x[0])
-        .fold(0, |a, _| a + 1)
+        .count()
 }
 
 #[cfg(test)]
