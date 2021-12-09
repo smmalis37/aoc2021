@@ -10,6 +10,7 @@ criterion = "0.3"
 dhat = "0.2"
 ahash = "0.7"
 either = "1.6"
+arrayvec = "0.7"
 
 [dependencies.lexical-core]
 version = "0.8"
