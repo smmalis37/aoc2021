@@ -32,7 +32,7 @@ impl<'a> Solver<'a> for Day4 {
             }
         }
 
-        let board_input = &input[line_length..];
+        let board_input = &input[line_length + 1..];
         let board_char_count = BOARD_SIZE * 3 + 1;
         let board_count = board_input.len() / board_char_count;
         let mut boards = vec![Board::default(); board_count];
@@ -42,13 +42,13 @@ impl<'a> Solver<'a> for Day4 {
             let mut pos = 0;
             for c in b[1..].chunks_exact(3) {
                 match c {
-                    [b' ' | b'\n', a @ b'0'..=b'9', b @ b'0'..=b'9'] => {
+                    [a @ b'0'..=b'9', b @ b'0'..=b'9', b' ' | b'\n'] => {
                         let num = (a - b'0') * 10 + (b - b'0');
                         boards[i][pos as usize] = num;
                         index[i][num as usize] = Some(pos);
                         pos += 1;
                     }
-                    [b' ' | b'\n', b' ', b @ b'0'..=b'9'] => {
+                    [b' ', b @ b'0'..=b'9', b' ' | b'\n'] => {
                         let num = b - b'0';
                         boards[i][pos as usize] = num;
                         index[i][num as usize] = Some(pos);
@@ -154,7 +154,8 @@ mod tests {
 10 16 15  9 19
 18  8 23 26 20
 22 11 13  6  5
- 2  0 12  3  7"
+ 2  0 12  3  7
+"
             )),
             4512
         );
@@ -182,7 +183,8 @@ mod tests {
 10 16 15  9 19
 18  8 23 26 20
 22 11 13  6  5
- 2  0 12  3  7"
+ 2  0 12  3  7
+"
             )),
             1924
         );
