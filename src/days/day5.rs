@@ -11,18 +11,19 @@ impl<'a> Solver<'a> for Day5 {
     type Output = usize;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        let mut input = input.as_bytes();
+        let input = input.as_bytes();
         let mut result = Vec::with_capacity(input.len() / "##,## -> ##,##".len());
+        let mut pos = 0;
 
-        while !input.is_empty() {
-            let (x1, n) = lexical_core::parse_partial(input).unwrap();
-            input = &input[n + 1..];
-            let (y1, n) = lexical_core::parse_partial(input).unwrap();
-            input = &input[n + 4..];
-            let (x2, n) = lexical_core::parse_partial(input).unwrap();
-            input = &input[n + 1..];
-            let (y2, n) = lexical_core::parse_partial(input).unwrap();
-            input = &input[n + 1..];
+        while pos < input.len() {
+            let (x1, n) = lexical_core::parse_partial(&input[pos..]).unwrap();
+            pos += n + 1;
+            let (y1, n) = lexical_core::parse_partial(&input[pos..]).unwrap();
+            pos += n + 4;
+            let (x2, n) = lexical_core::parse_partial(&input[pos..]).unwrap();
+            pos += n + 1;
+            let (y2, n) = lexical_core::parse_partial(&input[pos..]).unwrap();
+            pos += n + 1;
 
             result.push((x1, y1, x2, y2));
         }
@@ -100,8 +101,7 @@ mod tests {
 0,9 -> 2,9
 3,4 -> 1,4
 0,0 -> 8,8
-5,5 -> 8,2
-"
+5,5 -> 8,2"
             )),
             5
         );
@@ -120,8 +120,7 @@ mod tests {
 0,9 -> 2,9
 3,4 -> 1,4
 0,0 -> 8,8
-5,5 -> 8,2
-"
+5,5 -> 8,2"
             )),
             12
         );

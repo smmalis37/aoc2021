@@ -10,11 +10,11 @@ impl<'a> Solver<'a> for Day1 {
 
     fn parse(input: &'a str) -> Self::Parsed {
         let mut res = Vec::with_capacity(input.len() / 2);
-        let mut input = input.as_bytes();
+        let mut input = Some(input.as_bytes());
 
-        while !input.is_empty() {
-            let (num, size) = lexical_core::parse_partial(input).unwrap();
-            input = &input[size + 1..];
+        while let Some(i) = input {
+            let (num, size) = lexical_core::parse_partial(i).unwrap();
+            input = i.get(size + 1..);
             res.push(num);
         }
 
@@ -54,8 +54,7 @@ mod tests {
 240
 269
 260
-263
-"
+263"
             )),
             7
         );
@@ -74,8 +73,7 @@ mod tests {
 240
 269
 260
-263
-"
+263"
             )),
             5
         );

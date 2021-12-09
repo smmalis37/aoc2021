@@ -8,11 +8,12 @@ impl<'a> Solver<'a> for Day7 {
 
     fn parse(input: &'a str) -> Self::Parsed {
         let mut res = Vec::with_capacity(input.len() / 2);
-        let mut input = input.as_bytes();
+        let input = input.as_bytes();
+        let mut pos = 0;
 
-        while !input.is_empty() {
-            let (num, size) = lexical_core::parse_partial(input).unwrap();
-            input = &input[size + 1..];
+        while pos < input.len() {
+            let (num, size) = lexical_core::parse_partial(&input[pos..]).unwrap();
+            pos += size + 1;
             res.push(num);
         }
 
@@ -51,11 +52,11 @@ mod tests {
 
     #[test]
     fn d7p1() {
-        assert_eq!(Day7::part1(Day7::parse("16,1,2,0,4,2,7,1,2,14 ")), 37);
+        assert_eq!(Day7::part1(Day7::parse("16,1,2,0,4,2,7,1,2,14")), 37);
     }
 
     #[test]
     fn d7p2() {
-        assert_eq!(Day7::part2(Day7::parse("16,1,2,0,4,2,7,1,2,14 ")), 170);
+        assert_eq!(Day7::part2(Day7::parse("16,1,2,0,4,2,7,1,2,14")), 170);
     }
 }
