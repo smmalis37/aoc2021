@@ -30,7 +30,12 @@ impl<'a> Solver<'a> for Day9 {
 
         for r in 0..data.line_count() {
             for c in 0..data.line_length() {
-                let check = |ra, ca| check(&data, r, c, ra, ca);
+                let check = |ra, ca| {
+                    r.checked_add_signed(ra)
+                        .zip(c.checked_add_signed(ca))
+                        .and_then(|(r2, c2)| data.get(r2).and_then(|r3| r3.get(c2)))
+                        .map_or(true, |&x| data[r][c] < x)
+                };
                 if check(0, -1) && check(0, 1) && check(-1, 0) && check(1, 0) {
                     sum += (data[r][c] + 1) as Self::Output;
                 }
@@ -46,14 +51,13 @@ impl<'a> Solver<'a> for Day9 {
 
         for r in 0..data.line_count() {
             for c in 0..data.line_length() {
-                let check = |ra, rc| check(&data, r, c, ra, rc);
-                if check(0, -1) && check(0, 1) && check(-1, 0) && check(1, 0) {
+                if data[r][c] != 9 {
                     stack.push((r, c));
                     let mut count = 0;
 
                     while let Some((sr, sc)) = stack.pop() {
                         let cell = data.get(sr).and_then(|x| x.get(sc));
-                        if cell != Some(&9) && cell.is_some() {
+                        if cell.is_some() && cell != Some(&9) {
                             data[sr][sc] = 9;
                             count += 1;
                             stack.extend_from_slice(&[
@@ -72,14 +76,6 @@ impl<'a> Solver<'a> for Day9 {
 
         basins.into_iter_sorted().take(3).product()
     }
-}
-
-#[inline]
-fn check(data: &Grid<u8>, r: usize, c: usize, r_adj: isize, c_adj: isize) -> bool {
-    r.checked_add_signed(r_adj)
-        .zip(c.checked_add_signed(c_adj))
-        .and_then(|(r2, c2)| data.get(r2).and_then(|r3| r3.get(c2)))
-        .map_or(true, |&x| data[r][c] < x)
 }
 
 #[cfg(test)]

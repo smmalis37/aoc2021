@@ -27,7 +27,7 @@ impl<'a> Solver<'a> for Day4 {
                     num = 0;
                 }
                 _ => {
-                    //unreachable!();
+                    unreachable!();
                 }
             }
         }
@@ -55,7 +55,7 @@ impl<'a> Solver<'a> for Day4 {
                         pos += 1;
                     }
                     _ => {
-                        //unreachable!();
+                        unreachable!();
                     }
                 }
             }
