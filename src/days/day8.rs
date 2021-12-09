@@ -3,30 +3,48 @@ use crate::{solver::Solver, util::*};
 pub struct Day8;
 
 impl<'a> Solver<'a> for Day8 {
-    type Parsed = &'a [u8]; //Vec<([&'a [u8]; 10], [&'a [u8]; 4])>;
-    type Output = u32;
+    type Parsed = Vec<([&'a [u8]; 10], [&'a [u8]; 4])>;
+    type Output = usize;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        input.as_bytes()
-    }
-
-    fn part1(data: Self::Parsed) -> Self::Output {
-        const PATTERN_LENGTH: usize = 61;
+        let input = input.as_bytes();
+        let mut iter = memchr::memchr2_iter(b' ', b'\n', input).peekable();
+        let mut res = Vec::with_capacity(input.len() / 72);
         let mut pos = 0;
-        let mut res = 0;
 
-        while pos < data.len() {
-            pos += PATTERN_LENGTH;
-            for _ in 0..4 {
-                let space = memchr::memchr2(b' ', b'\n', &data[pos..]).unwrap();
-                if [2, 3, 4, 7].contains(&space) {
-                    res += 1;
-                }
-                pos += space + 1;
-            }
+        while iter.peek().is_some() {
+            let digits = [
+                &input[pos..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+            ];
+            let separator = iter.next();
+            debug_assert!(input[separator.unwrap() + 1] == b'|');
+            let outputs = [
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+                &input[iter.next().unwrap() + 1..*iter.peek().unwrap()],
+            ];
+            res.push((digits, outputs));
+            pos = iter.next().unwrap();
         }
 
         res
+    }
+
+    fn part1(data: Self::Parsed) -> Self::Output {
+        data.into_iter()
+            .flat_map(|(_, outputs)| outputs)
+            .filter(|o| [2, 3, 4, 7].contains(&o.len()))
+            .count()
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
