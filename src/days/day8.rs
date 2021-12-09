@@ -4,8 +4,10 @@ use crate::solver::Solver;
 
 pub struct Day8;
 
+type N = u8;
+
 impl<'a> Solver<'a> for Day8 {
-    type Parsed = Vec<([u8; 10], [u8; 4])>;
+    type Parsed = Vec<([N; 10], [N; 4])>;
     type Output = usize;
 
     fn parse(input: &'a str) -> Self::Parsed {
@@ -16,31 +18,13 @@ impl<'a> Solver<'a> for Day8 {
 
         while pos < input.len() {
             let mut digits = ArrayVec::new();
-            for _ in 0..10 {
-                let space = iter.next().unwrap();
-                let word = &input[pos..space];
-                let mut x = 0;
-                for c in word {
-                    x |= 1 << (c - b'a');
-                }
-                digits.push(x);
-                pos = space + 1;
-            }
+            inner_parse(input, &mut digits, &mut iter, &mut pos);
 
             debug_assert!(input[pos] == b'|');
             pos = iter.next().unwrap() + 1;
 
             let mut outputs = ArrayVec::new();
-            for _ in 0..4 {
-                let space = iter.next().unwrap();
-                let word = &input[pos..space];
-                let mut x = 0;
-                for c in word {
-                    x |= 1 << (c - b'a');
-                }
-                outputs.push(x);
-                pos = space + 1;
-            }
+            inner_parse(input, &mut outputs, &mut iter, &mut pos);
 
             res.push((digits.into_inner().unwrap(), outputs.into_inner().unwrap()));
         }
@@ -103,6 +87,25 @@ impl<'a> Solver<'a> for Day8 {
         }
 
         sum
+    }
+}
+
+fn inner_parse<const S: usize>(
+    inp: &[u8],
+    out: &mut ArrayVec<N, S>,
+    i: &mut impl Iterator<Item = usize>,
+    p: &mut usize,
+) {
+    for _ in 0..S {
+        let space = i.next().unwrap();
+        let word = &inp[*p..space];
+        assert!(word.len() >= 2);
+        let mut x = 0;
+        for c in word {
+            x |= 1 << (c - b'a');
+        }
+        out.push(x);
+        *p = space + 1;
     }
 }
 
