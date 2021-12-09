@@ -90,6 +90,7 @@ impl<'a> Solver<'a> for Day8 {
     }
 }
 
+#[inline]
 fn inner_parse<const S: usize>(
     inp: &[u8],
     out: &mut ArrayVec<N, S>,

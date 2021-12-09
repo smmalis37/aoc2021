@@ -28,6 +28,7 @@ impl<'a> Solver<'a> for Day6 {
     }
 }
 
+#[inline]
 fn solve(mut data: <Day6 as Solver>::Parsed, count: usize) -> N {
     let mut newbies = [0; 2];
     for _ in 0..count {

@@ -74,6 +74,7 @@ impl<'a> Solver<'a> for Day9 {
     }
 }
 
+#[inline]
 fn check(data: &Grid<u8>, r: usize, c: usize, r_adj: isize, c_adj: isize) -> bool {
     r.checked_add_signed(r_adj)
         .zip(c.checked_add_signed(c_adj))
