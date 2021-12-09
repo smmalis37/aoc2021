@@ -27,20 +27,6 @@ macro_rules! day {
     };
 }
 
-fn main() {
-    #[cfg(debug_assertions)]
-    let _dhat = dhat::Dhat::start_heap_profiling();
-
-    println!("AOC {}", YEAR);
-    day!(1, 1754, 1789);
-    day!(2, 1660158, 1604592846);
-    day!(3, 1540244, 4203981);
-    day!(4, 34506, 7686);
-    day!(5, 5145, 16518);
-    day!(6, 372300, 1675781200288);
-    day!(7, 328318, 89791146);
-}
-
 fn solve<O, O2, S: for<'a> Solver<'a, Output = O, Output2 = O2>>(
     day_number: u8,
     part1_output: Option<O>,
@@ -115,4 +101,19 @@ fn bench<'a, S: Solver<'a>>(day_number: u8, input: &'a str) {
     group.bench_with_input("part 2", &parsed, |b, i| {
         b.iter_batched(|| i.clone(), S::part2, criterion::BatchSize::SmallInput)
     });
+}
+
+fn main() {
+    #[cfg(debug_assertions)]
+    let _dhat = dhat::Dhat::start_heap_profiling();
+
+    println!("AOC {}", YEAR);
+    day!(1, 1754, 1789);
+    day!(2, 1660158, 1604592846);
+    day!(3, 1540244, 4203981);
+    day!(4, 34506, 7686);
+    day!(5, 5145, 16518);
+    day!(6, 372300, 1675781200288);
+    day!(7, 328318, 89791146);
+    day!(8);
 }
