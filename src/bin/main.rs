@@ -22,15 +22,15 @@ macro_rules! day {
 
     ( $d:expr => $o1:expr, $o2:expr ) => {
         paste::expr! {
-            solve::<_, _, [<day $d>]::[<Day $d>]>($d, $o1, $o2);
+            solve::<_, [<day $d>]::[<Day $d>]>($d, $o1, $o2);
         }
     };
 }
 
-fn solve<O, O2, S: for<'a> Solver<'a, Output = O, Output2 = O2>>(
+fn solve<O, S: for<'a> Solver<'a, Output = O>>(
     day_number: u8,
     part1_output: Option<O>,
-    part2_output: Option<O2>,
+    part2_output: Option<O>,
 ) {
     let input = std::fs::read_to_string(format!("input/{}/day{}.txt", YEAR, day_number)).unwrap();
 
@@ -49,7 +49,7 @@ fn run<'a, S: Solver<'a>>(
     day_number: u8,
     input: &'a str,
     part1_output: Option<S::Output>,
-    part2_output: Option<S::Output2>,
+    part2_output: Option<S::Output>,
 ) {
     let start_time = Instant::now();
     let parsed = S::parse(input);

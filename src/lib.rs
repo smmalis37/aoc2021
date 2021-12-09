@@ -1,5 +1,4 @@
 #![feature(
-    associated_type_defaults,
     type_alias_impl_trait,
     array_windows,
     destructuring_assignment,
