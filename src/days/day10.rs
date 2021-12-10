@@ -1,62 +1,67 @@
-use crate::{solver::Solver, util::*};
+use crate::solver::Solver;
 
 pub struct Day10;
 
 type Num = u64;
 
 impl<'a> Solver<'a> for Day10 {
-    type Parsed = impl Iterator<Item = &'a [u8]> + Clone;
+    type Parsed = &'a [u8];
     type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        input.as_bytes().split(bytelines)
+        input.as_bytes()
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
-        let mut score = 0;
-        'l: for l in data {
-            let mut stack = Vec::new();
-            for &c in l {
-                match c {
-                    b'(' | b'[' | b'{' | b'<' => stack.push(c),
-                    b')' | b']' | b'}' | b'>' if stack.pop().unwrap() != get_opener(c) => {
-                        score += get_part1_score(c);
-                        continue 'l;
-                    }
-                    _ => {}
-                }
-            }
-        }
-
-        score
+        solve(&data, std::vec::Vec::clear)
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
-        let mut scores = Vec::new();
-        'l: for l in data {
-            let mut stack = Vec::new();
-            for &c in l {
-                match c {
-                    b'(' | b'[' | b'{' | b'<' => stack.push(c),
-                    b')' | b']' | b'}' | b'>' if stack.pop().unwrap() != get_opener(c) => {
-                        continue 'l
-                    }
-                    _ => {}
+        let mut scores = Vec::with_capacity(data.len() / 90);
+
+        solve(
+            &data,
+            #[inline]
+            |stack| {
+                let mut score = 0;
+
+                while let Some(o) = stack.pop() {
+                    score = score * 5 + get_part2_score(o);
                 }
-            }
 
-            let mut score = 0;
-
-            while let Some(o) = stack.pop() {
-                score = score * 5 + get_part2_score(o);
-            }
-
-            scores.push(score);
-        }
+                scores.push(score);
+            },
+        );
 
         let mid_pos = scores.len() / 2;
         *scores.select_nth_unstable(mid_pos).1
     }
+}
+
+#[inline]
+fn solve(data: &<Day10 as Solver>::Parsed, mut newline: impl FnMut(&mut Vec<u8>)) -> Num {
+    let mut pos = 0;
+    let mut stack = Vec::with_capacity(110);
+    let mut score = 0;
+
+    while pos < data.len() {
+        let c = data[pos];
+        match c {
+            b'(' | b'[' | b'{' | b'<' => stack.push(c),
+            b')' | b']' | b'}' | b'>' => {
+                if stack.pop().unwrap() != get_opener(c) {
+                    score += get_part1_score(c);
+                    stack.clear();
+                    pos += memchr::memchr(b'\n', &data[pos..]).unwrap();
+                }
+            }
+            b'\n' => newline(&mut stack),
+            _ => unreachable!(),
+        }
+        pos += 1;
+    }
+
+    score
 }
 
 #[inline]
