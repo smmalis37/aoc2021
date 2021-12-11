@@ -11,18 +11,13 @@ impl<'a> Solver<'a> for Day9 {
     fn parse(input: &'a str) -> Self::Parsed {
         let input = input.as_bytes();
         let line_length = memchr::memchr(b'\n', input).unwrap();
-        let line_count = input.len() / (line_length + 1);
-        let mut output = Vec::with_capacity(line_length * line_count);
+        let data = input
+            .chunks_exact(line_length + 1)
+            .flat_map(|l| &l[..line_length])
+            .copied()
+            .collect();
 
-        for x in input {
-            match x {
-                b'0'..=b'9' => output.push(x - b'0'),
-                b'\n' => {}
-                _ => unreachable!(),
-            }
-        }
-
-        Grid::from_vec(output, line_length, line_count)
+        Grid::from_vec(data, line_length, input.len() / (line_length + 1))
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
@@ -37,7 +32,7 @@ impl<'a> Solver<'a> for Day9 {
                         .map_or(true, |&x| data[r][c] < x)
                 };
                 if check(0, -1) && check(0, 1) && check(-1, 0) && check(1, 0) {
-                    sum += (data[r][c] + 1) as Self::Output;
+                    sum += (data[r][c] + 1 - b'0') as Self::Output;
                 }
             }
         }
@@ -51,14 +46,14 @@ impl<'a> Solver<'a> for Day9 {
 
         for r in 0..data.line_count() {
             for c in 0..data.line_length() {
-                if data[r][c] != 9 {
+                if data[r][c] != b'9' {
                     stack.push((r, c));
                     let mut count = 0;
 
                     while let Some((sr, sc)) = stack.pop() {
                         let cell = data.get(sr).and_then(|x| x.get(sc));
-                        if cell.is_some() && cell != Some(&9) {
-                            data[sr][sc] = 9;
+                        if cell.is_some() && cell != Some(&b'9') {
+                            data[sr][sc] = b'9';
                             count += 1;
                             stack.extend_from_slice(&[
                                 (sr, sc + 1),
