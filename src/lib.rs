@@ -1,14 +1,17 @@
 #![feature(
     type_alias_impl_trait,
-    array_windows,
-    destructuring_assignment,
     mixed_integer_ops,
     label_break_value,
     int_abs_diff,
     int_roundings,
     binary_heap_into_iter_sorted
 )]
-#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#![warn(
+    clippy::all,
+    clippy::pedantic,
+    clippy::nursery,
+    clippy::if_then_some_else_none
+)]
 #![forbid(unsafe_code)]
 #![allow(
     clippy::wildcard_imports,

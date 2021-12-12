@@ -2,9 +2,11 @@ use crate::solver::Solver;
 
 pub struct Day7;
 
+type Num = u32;
+
 impl<'a> Solver<'a> for Day7 {
-    type Parsed = Vec<u16>;
-    type Output = u32;
+    type Parsed = Vec<Num>;
+    type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let mut res = Vec::with_capacity(input.len() / 2);
@@ -22,26 +24,18 @@ impl<'a> Solver<'a> for Day7 {
     fn part1(mut data: Self::Parsed) -> Self::Output {
         let med_pos = data.len() / 2;
         let (left, &mut val, right) = data.select_nth_unstable(med_pos);
-        left.iter()
-            .map(|x| (val - x) as Self::Output)
-            .sum::<Self::Output>()
-            + right
-                .iter()
-                .map(|x| (x - val) as Self::Output)
-                .sum::<Self::Output>()
+
+        left.iter().map(|x| val - x).sum::<Num>() + right.iter().map(|x| x - val).sum::<Num>()
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
         #[allow(clippy::cast_possible_truncation)]
         let mean = data
             .iter()
-            .map(|&x| x as Self::Output)
-            .sum::<Self::Output>()
-            .unstable_div_floor(data.len() as Self::Output);
+            .sum::<Num>()
+            .unstable_div_floor(data.len() as Num);
 
-        data.into_iter()
-            .flat_map(|x| 1..=(mean.abs_diff(x as Self::Output)))
-            .sum()
+        data.into_iter().flat_map(|x| 1..=mean.abs_diff(x)).sum()
     }
 }
 

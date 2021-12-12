@@ -1,19 +1,17 @@
 use crate::solver::Solver;
 
 pub struct Day6;
-type N = u64;
+type Num = u64;
 
 impl<'a> Solver<'a> for Day6 {
-    type Parsed = [N; 7];
-    type Output = N;
+    type Parsed = [Num; 7];
+    type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        let mut input = input.as_bytes().iter();
         let mut result = [0; 7];
 
-        while let Some(n) = input.next() {
+        for n in input.as_bytes().iter().step_by(2) {
             result[(n - b'0') as usize] += 1;
-            input.next();
         }
 
         result
@@ -28,9 +26,9 @@ impl<'a> Solver<'a> for Day6 {
     }
 }
 
-#[inline]
-fn solve(mut data: <Day6 as Solver>::Parsed, count: usize) -> N {
+fn solve(mut data: <Day6 as Solver>::Parsed, count: usize) -> Num {
     let mut newbies = [0; 2];
+
     for _ in 0..count {
         let no_longer_new = newbies[0];
         newbies[0] = newbies[1];
@@ -39,7 +37,7 @@ fn solve(mut data: <Day6 as Solver>::Parsed, count: usize) -> N {
         data[6] += no_longer_new;
     }
 
-    data.into_iter().sum::<N>() + newbies.into_iter().sum::<N>()
+    data.into_iter().sum::<Num>() + newbies.into_iter().sum::<Num>()
 }
 
 #[cfg(test)]

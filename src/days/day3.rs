@@ -10,7 +10,10 @@ impl<'a> Solver<'a> for Day3 {
         let len = memchr::memchr(b'\n', input.as_bytes()).unwrap();
         (
             len,
-            input.as_bytes().chunks(len + 1).map(move |l| &l[..len]),
+            input
+                .as_bytes()
+                .chunks_exact(len + 1)
+                .map(move |l| &l[..len]),
         )
     }
 
@@ -29,7 +32,7 @@ impl<'a> Solver<'a> for Day3 {
         let mut gamma = 0;
         let mut epsilon = 0;
 
-        for &c in &counts {
+        for c in counts {
             gamma <<= 1;
             epsilon <<= 1;
 

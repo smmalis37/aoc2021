@@ -10,37 +10,33 @@ pub enum Direction {
 }
 
 impl<'a> Solver<'a> for Day2 {
-    type Parsed = Vec<(Direction, u8)>;
+    type Parsed = impl Iterator<Item = (Direction, u8)> + Clone;
     type Output = u32;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let mut input = input.as_bytes().iter();
-        let mut res = Vec::with_capacity(input.len() / "up #\n".len());
+        std::iter::from_fn(move || {
+            input.next().map(|d| {
+                let (dir, pos) = match d {
+                    b'f' => (Direction::Forward, "forward".len()),
+                    b'd' => (Direction::Down, "down".len()),
+                    b'u' => (Direction::Up, "up".len()),
+                    _ => unreachable!(),
+                };
 
-        while let Some(d) = input.next() {
-            let (dir, pos) = match d {
-                b'f' => (Direction::Forward, "forward".len()),
-                b'd' => (Direction::Down, "down".len()),
-                b'u' => (Direction::Up, "up".len()),
-                _ => unreachable!(),
-            };
-            input.nth(pos - 1);
+                let amount = input.nth(pos).unwrap() - b'0';
+                input.next();
 
-            let num = input.next().unwrap();
-            let amount = num - b'0';
-
-            input.next();
-            res.push((dir, amount));
-        }
-
-        res
+                (dir, amount)
+            })
+        })
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
         let mut horiz = 0;
         let mut depth = 0;
 
-        for &(d, a) in &data {
+        for (d, a) in data {
             let a = a as Self::Output;
             match d {
                 Direction::Forward => horiz += a,
@@ -57,7 +53,7 @@ impl<'a> Solver<'a> for Day2 {
         let mut depth = 0;
         let mut aim = 0;
 
-        for &(d, a) in &data {
+        for (d, a) in data {
             let a = a as Self::Output;
             match d {
                 Direction::Forward => {
