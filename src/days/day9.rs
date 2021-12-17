@@ -1,5 +1,3 @@
-use std::collections::BinaryHeap;
-
 use crate::{solver::Solver, util::*};
 
 pub struct Day9;
@@ -11,11 +9,13 @@ impl<'a> Solver<'a> for Day9 {
     fn parse(input: &'a str) -> Self::Parsed {
         let input = input.as_bytes();
         let line_length = memchr::memchr(b'\n', input).unwrap();
-        let data = input
-            .chunks_exact(line_length + 1)
-            .flat_map(|l| &l[..line_length])
-            .copied()
-            .collect();
+        let mut data = Vec::with_capacity(input.len());
+        data.extend(
+            input
+                .chunks_exact(line_length + 1)
+                .flat_map(|l| &l[..line_length])
+                .copied(),
+        );
 
         Grid::from_vec(data, line_length, input.len() / (line_length + 1))
     }
@@ -40,9 +40,10 @@ impl<'a> Solver<'a> for Day9 {
         sum
     }
 
+    #[allow(clippy::stable_sort_primitive)] // It's faster here because basins is already mostly sorted.
     fn part2(mut data: Self::Parsed) -> Self::Output {
         let mut stack = Vec::with_capacity(data.line_length());
-        let mut basins = BinaryHeap::with_capacity(data.line_length());
+        let mut basins = [0; 4];
 
         for r in 0..data.line_count() {
             for c in 0..data.line_length() {
@@ -64,12 +65,13 @@ impl<'a> Solver<'a> for Day9 {
                         }
                     }
 
-                    basins.push(count);
+                    basins[0] = count;
+                    basins.sort();
                 }
             }
         }
 
-        basins.into_iter_sorted().take(3).product()
+        basins.into_iter().skip(1).product()
     }
 }
 

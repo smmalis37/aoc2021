@@ -3,8 +3,7 @@
     mixed_integer_ops,
     label_break_value,
     int_abs_diff,
-    int_roundings,
-    binary_heap_into_iter_sorted
+    int_roundings
 )]
 #![warn(
     clippy::all,
