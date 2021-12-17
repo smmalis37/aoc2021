@@ -11,20 +11,18 @@ impl<'a> Solver<'a> for Day8 {
     type Output = usize;
 
     fn parse(input: &'a str) -> Self::Parsed {
-        let input = input.as_bytes();
-        let mut iter = memchr::memchr2_iter(b' ', b'\n', input);
+        let mut input = input.as_bytes();
         let mut res = Vec::with_capacity(input.len() / 72);
-        let mut pos = 0;
 
-        while pos < input.len() {
+        while !input.is_empty() {
             let mut digits = ArrayVec::new();
-            inner_parse(input, &mut digits, &mut iter, &mut pos);
+            inner_parse(&mut input, &mut digits);
 
-            debug_assert!(input[pos] == b'|');
-            pos = iter.next().unwrap() + 1;
+            debug_assert!(input[0] == b'|');
+            input = &input[2..];
 
             let mut outputs = ArrayVec::new();
-            inner_parse(input, &mut outputs, &mut iter, &mut pos);
+            inner_parse(&mut input, &mut outputs);
 
             res.push((digits.into_inner().unwrap(), outputs.into_inner().unwrap()));
         }
@@ -36,48 +34,46 @@ impl<'a> Solver<'a> for Day8 {
         data.into_iter()
             .flat_map(|(_, outputs)| outputs)
             .filter(|o| [2, 3, 4, 7].contains(&o.count_ones()))
-            .count() as Self::Output
+            .count()
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
         let mut sum = 0;
         for (digits, output) in data {
-            let [mut d0, mut d1, mut d2, mut d3, mut d4, mut d5, mut d6, mut d7, mut d8, mut d9] =
-                [0u8; 10];
+            let mut map = [0u16; 10];
 
             for (d, i) in digits.iter().zip(0..) {
                 match d.count_ones() {
-                    2 => d1 = i,
-                    4 => d4 = i,
-                    3 => d7 = i,
-                    7 => d8 = i,
+                    2 => map[1] = i,
+                    4 => map[4] = i,
+                    3 => map[7] = i,
+                    7 => map[8] = i,
                     _ => {}
                 }
             }
 
             for (d, i) in digits.iter().zip(0..) {
-                match (d ^ digits[d1 as usize]).count_ones() {
-                    3 => d3 = i,
-                    6 => d6 = i,
+                match (d ^ digits[map[1] as usize]).count_ones() {
+                    3 => map[3] = i,
+                    6 => map[6] = i,
                     _ => {}
                 }
 
-                match (d ^ digits[d4 as usize]).count_ones() {
-                    5 => d2 = i,
-                    2 if i != d1 => d9 = i,
+                match (d ^ digits[map[4] as usize]).count_ones() {
+                    5 => map[2] = i,
+                    2 if i != map[1] => map[9] = i,
                     _ => {}
                 }
             }
 
             for (d, i) in digits.iter().zip(0..) {
-                match (d ^ digits[d6 as usize]).count_ones() {
-                    1 if i != d8 => d5 = i,
-                    2 if i != d9 => d0 = i,
+                match (d ^ digits[map[6] as usize]).count_ones() {
+                    1 if i != map[8] => map[5] = i,
+                    2 if i != map[9] => map[0] = i,
                     _ => {}
                 }
             }
 
-            let map = [d0, d1, d2, d3, d4, d5, d6, d7, d8, d9];
             let mut res = 0;
             for &o in &output {
                 let digit = map.iter().position(|&x| digits[x as usize] == o).unwrap();
@@ -91,22 +87,18 @@ impl<'a> Solver<'a> for Day8 {
 }
 
 #[inline]
-fn inner_parse<const S: usize>(
-    inp: &[u8],
-    out: &mut ArrayVec<N, S>,
-    i: &mut impl Iterator<Item = usize>,
-    p: &mut usize,
-) {
+fn inner_parse<const S: usize>(input: &mut &[u8], out: &mut ArrayVec<N, S>) {
     for _ in 0..S {
-        let space = i.next().unwrap();
-        let word = &inp[*p..space];
-        assert!(word.len() >= 2);
+        let space = memchr::memchr2(b' ', b'\n', input).unwrap();
+        assert!(space >= 2);
+
         let mut x = 0;
-        for c in word {
+        for c in &input[..space] {
             x |= 1 << (c - b'a');
         }
         out.push(x);
-        *p = space + 1;
+
+        *input = &input[space + 1..];
     }
 }
 
