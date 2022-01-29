@@ -30,10 +30,7 @@ impl<'a> Solver<'a> for Day7 {
 
     fn part2(data: Self::Parsed) -> Self::Output {
         #[allow(clippy::cast_possible_truncation)]
-        let mean = data
-            .iter()
-            .sum::<Num>()
-            .unstable_div_floor(data.len() as Num);
+        let mean = data.iter().sum::<Num>().div_floor(data.len() as Num);
 
         data.into_iter().flat_map(|x| 1..=mean.abs_diff(x)).sum()
     }

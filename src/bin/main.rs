@@ -5,7 +5,7 @@ const YEAR: &str = "2021";
 
 #[cfg(debug_assertions)]
 #[global_allocator]
-static ALLOCATOR: dhat::DhatAlloc = dhat::DhatAlloc;
+static ALLOCATOR: dhat::Alloc = dhat::Alloc;
 
 macro_rules! day {
     ( $d:expr ) => {
@@ -105,7 +105,7 @@ fn bench<'a, S: Solver<'a>>(day_number: u8, input: &'a str) {
 
 fn main() {
     #[cfg(debug_assertions)]
-    let _dhat = dhat::Dhat::start_heap_profiling();
+    let _dhat = dhat::Profiler::new_heap();
 
     println!("AOC {}", YEAR);
     day!(1, 1754, 1789);
