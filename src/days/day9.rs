@@ -42,7 +42,7 @@ impl<'a> Solver<'a> for Day9 {
 
     #[allow(clippy::stable_sort_primitive)] // It's faster here because basins is already mostly sorted.
     fn part2(mut data: Self::Parsed) -> Self::Output {
-        let mut stack = Vec::with_capacity(data.line_length());
+        let mut stack = Vec::with_capacity(data.len());
         let mut basins = [0; 4];
 
         for r in 0..data.line_count() {

@@ -24,7 +24,7 @@ pub const fn bytelines(&x: &u8) -> bool {
     x == b'\n'
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Grid<T> {
     data: Vec<T>,
     line_length: usize,
@@ -66,6 +66,12 @@ impl<T> Grid<T> {
     }
 
     #[inline]
+    pub fn get_mut(&mut self, i: usize) -> Option<&mut [T]> {
+        i.checked_mul(self.line_length)
+            .and_then(|start| self.data.get_mut(start..start + self.line_length))
+    }
+
+    #[inline]
     pub const fn line_count(&self) -> usize {
         self.line_count
     }
@@ -73,5 +79,20 @@ impl<T> Grid<T> {
     #[inline]
     pub const fn line_length(&self) -> usize {
         self.line_length
+    }
+
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
+
+    #[inline]
+    pub fn iter(&self) -> std::slice::ChunksExact<T> {
+        self.data.chunks_exact(self.line_length)
+    }
+
+    #[inline]
+    pub fn iter_mut(&mut self) -> std::slice::ChunksExactMut<T> {
+        self.data.chunks_exact_mut(self.line_length)
     }
 }
