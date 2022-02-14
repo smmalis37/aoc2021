@@ -9,9 +9,11 @@ pub enum Direction {
     Up,
 }
 
+type Num = u32;
+
 impl<'a> Solver<'a> for Day2 {
-    type Parsed = impl Iterator<Item = (Direction, u8)> + Clone;
-    type Output = u32;
+    type Parsed = impl Iterator<Item = (Direction, Num)> + Clone;
+    type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let mut input = input.as_bytes().iter();
@@ -27,7 +29,7 @@ impl<'a> Solver<'a> for Day2 {
                 let amount = input.nth(pos).unwrap() - b'0';
                 input.next();
 
-                (dir, amount)
+                (dir, amount.into())
             })
         })
     }
@@ -37,7 +39,6 @@ impl<'a> Solver<'a> for Day2 {
         let mut depth = 0;
 
         for (d, a) in data {
-            let a = a as Self::Output;
             match d {
                 Direction::Forward => horiz += a,
                 Direction::Down => depth += a,
@@ -54,7 +55,6 @@ impl<'a> Solver<'a> for Day2 {
         let mut aim = 0;
 
         for (d, a) in data {
-            let a = a as Self::Output;
             match d {
                 Direction::Forward => {
                     horiz += a;

@@ -2,7 +2,6 @@
     type_alias_impl_trait,
     mixed_integer_ops,
     label_break_value,
-    int_abs_diff,
     int_roundings
 )]
 #![warn(

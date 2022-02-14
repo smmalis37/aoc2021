@@ -6,10 +6,11 @@ const ROW_SIZE: usize = 5;
 const BOARD_SIZE: usize = ROW_SIZE * ROW_SIZE;
 pub type Board = [u8; BOARD_SIZE];
 pub type Index = Vec<[Option<u8>; 100]>;
+type Num = u16;
 
 impl<'a> Solver<'a> for Day4 {
     type Parsed = (Vec<u8>, Vec<Board>, Index);
-    type Output = u16;
+    type Output = Num;
 
     fn parse(input: &'a str) -> Self::Parsed {
         let input = input.as_bytes();
@@ -82,7 +83,7 @@ impl<'a> Solver<'a> for Day4 {
 fn solve(
     (calls, boards, index): <Day4 as Solver>::Parsed,
     mut break_time: impl FnMut() -> bool,
-) -> u16 {
+) -> Num {
     let mut called = vec![[false; BOARD_SIZE]; boards.len()];
     let mut won = vec![false; boards.len()];
 
@@ -123,9 +124,9 @@ fn solve(
         .into_iter()
         .zip(called[winner].into_iter())
         .filter(|(_, called)| !called)
-        .map(|(num, _)| num as u16)
-        .sum::<u16>()
-        * (last_call as u16)
+        .map(|(num, _)| num as Num)
+        .sum::<Num>()
+        * (last_call as Num)
 }
 
 #[cfg(test)]
