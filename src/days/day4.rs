@@ -124,9 +124,9 @@ fn solve(
         .into_iter()
         .zip(called[winner].into_iter())
         .filter(|(_, called)| !called)
-        .map(|(num, _)| num as Num)
+        .map(|(num, _)| Num::from(num))
         .sum::<Num>()
-        * (last_call as Num)
+        * Num::from(last_call)
 }
 
 #[cfg(test)]

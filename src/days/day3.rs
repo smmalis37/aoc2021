@@ -24,7 +24,7 @@ impl<'a> Solver<'a> for Day3 {
         for l in data {
             line_count += 1;
             for (digit, count) in l.iter().zip(counts.iter_mut()) {
-                *count += (digit - b'0') as u16;
+                *count += u16::from(digit - b'0');
             }
         }
 
@@ -38,8 +38,8 @@ impl<'a> Solver<'a> for Day3 {
 
             let res = c > half_count;
 
-            gamma += res as Self::Output;
-            epsilon += !res as Self::Output;
+            gamma += Self::Output::from(res);
+            epsilon += Self::Output::from(!res);
         }
 
         gamma * epsilon

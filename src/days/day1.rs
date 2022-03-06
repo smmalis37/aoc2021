@@ -37,7 +37,7 @@ fn solve<const N: usize>(mut data: <Day1 as Solver>::Parsed) -> Num {
     }
 
     for x in data {
-        count += (x > window[0]) as Num;
+        count += Num::from(x > window[0]);
         window.rotate_left(1);
         window[N - 1] = x;
     }

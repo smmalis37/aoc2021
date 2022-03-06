@@ -32,7 +32,7 @@ impl<'a> Solver<'a> for Day9 {
                         .map_or(true, |&x| data[r][c] < x)
                 };
                 if check(0, -1) && check(0, 1) && check(-1, 0) && check(1, 0) {
-                    sum += (data[r][c] + 1 - b'0') as Self::Output;
+                    sum += Self::Output::from(data[r][c] + 1 - b'0');
                 }
             }
         }
