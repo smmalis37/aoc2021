@@ -19,7 +19,7 @@ impl BStrParse for [u8] {
     }
 }
 
-#[allow(clippy::trivially_copy_pass_by_ref)]
+#[allow(clippy::trivially_copy_pass_by_ref)] // Needed for types to match
 pub const fn bytelines(&x: &u8) -> bool {
     x == b'\n'
 }

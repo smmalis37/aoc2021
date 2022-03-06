@@ -14,14 +14,16 @@ impl<'a> Solver<'a> for Day5 {
         let mut input = input.as_bytes();
         let mut result = Vec::with_capacity(input.len() / "##,## -> ##,##".len());
 
+        #[allow(clippy::shadow_unrelated)] // Clippy bug?
         while !input.is_empty() {
-            let (x1, n) = lexical_core::parse_partial(input).unwrap();
+            let (x1, x2, y1, y2, mut n);
+            (x1, n) = lexical_core::parse_partial(input).unwrap();
             input = &input[n + 1..];
-            let (y1, n) = lexical_core::parse_partial(input).unwrap();
+            (y1, n) = lexical_core::parse_partial(input).unwrap();
             input = &input[n + 4..];
-            let (x2, n) = lexical_core::parse_partial(input).unwrap();
+            (x2, n) = lexical_core::parse_partial(input).unwrap();
             input = &input[n + 1..];
-            let (y2, n) = lexical_core::parse_partial(input).unwrap();
+            (y2, n) = lexical_core::parse_partial(input).unwrap();
             input = &input[n + 1..];
 
             result.push((x1, y1, x2, y2));
@@ -31,16 +33,16 @@ impl<'a> Solver<'a> for Day5 {
     }
 
     fn part1(data: Self::Parsed) -> Self::Output {
-        let mut grid = vec![[0u16; 1000]; 1000];
+        let mut grid = vec![[0_u16; 1000]; 1000];
 
         for (x1, y1, x2, y2) in data {
             if x1 == x2 {
                 for y in min(y1, y2)..=max(y1, y2) {
-                    grid[x1 as usize][y as usize] += 1;
+                    grid[usize::from(x1)][usize::from(y)] += 1;
                 }
             } else if y1 == y2 {
                 for x in min(x1, x2)..=max(x1, x2) {
-                    grid[x as usize][y1 as usize] += 1;
+                    grid[usize::from(x)][usize::from(y1)] += 1;
                 }
             }
         }
@@ -49,16 +51,16 @@ impl<'a> Solver<'a> for Day5 {
     }
 
     fn part2(data: Self::Parsed) -> Self::Output {
-        let mut grid = vec![[0u16; 1000]; 1000];
+        let mut grid = vec![[0_u16; 1000]; 1000];
 
         for (x1, y1, x2, y2) in data {
             if x1 == x2 {
                 for y in min(y1, y2)..=max(y1, y2) {
-                    grid[y as usize][x1 as usize] += 1;
+                    grid[usize::from(y)][usize::from(x1)] += 1;
                 }
             } else if y1 == y2 {
                 for x in min(x1, x2)..=max(x1, x2) {
-                    grid[y1 as usize][x as usize] += 1;
+                    grid[usize::from(y1)][usize::from(x)] += 1;
                 }
             } else {
                 let x_range = if x1 < x2 {
@@ -74,7 +76,7 @@ impl<'a> Solver<'a> for Day5 {
                 };
 
                 for (x, y) in x_range.zip(y_range) {
-                    grid[y as usize][x as usize] += 1;
+                    grid[usize::from(y)][usize::from(x)] += 1;
                 }
             }
         }

@@ -28,8 +28,8 @@ impl<'a> Solver<'a> for Day7 {
         left.iter().map(|x| val - x).sum::<Num>() + right.iter().map(|x| x - val).sum::<Num>()
     }
 
+    #[allow(clippy::as_conversions, clippy::cast_possible_truncation)] // u32 and usize
     fn part2(data: Self::Parsed) -> Self::Output {
-        #[allow(clippy::cast_possible_truncation)]
         let mean = data.iter().sum::<Num>().div_floor(data.len() as Num);
 
         data.into_iter().flat_map(|x| 1..=mean.abs_diff(x)).sum()

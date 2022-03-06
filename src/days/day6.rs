@@ -11,7 +11,7 @@ impl<'a> Solver<'a> for Day6 {
         let mut result = [0; 7];
 
         for n in input.as_bytes().iter().step_by(2) {
-            result[(n - b'0') as usize] += 1;
+            result[usize::from(n - b'0')] += 1;
         }
 
         result

@@ -29,6 +29,7 @@ impl<'a> Solver<'a> for Day11 {
         (0..100).map(|_| do_step(&mut data)).sum()
     }
 
+    #[allow(clippy::as_conversions)] // u32 and usize
     fn part2(mut data: Self::Parsed) -> Self::Output {
         for i in 1.. {
             if do_step(&mut data) as usize == data.len() {

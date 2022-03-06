@@ -17,15 +17,15 @@ impl<'a> Solver<'a> for Day4 {
         let line_length = memchr::memchr(b'\n', input).unwrap();
         let mut calls = Vec::with_capacity(line_length / 2);
 
-        let mut num = 0;
+        let mut cnum = 0;
         for c in &input[..=line_length] {
             match c {
                 b'0'..=b'9' => {
-                    num = (num * 10) + (c - b'0');
+                    cnum = (cnum * 10) + (c - b'0');
                 }
                 b',' | b'\n' => {
-                    calls.push(num);
-                    num = 0;
+                    calls.push(cnum);
+                    cnum = 0;
                 }
                 _ => {
                     unreachable!();
@@ -43,16 +43,16 @@ impl<'a> Solver<'a> for Day4 {
             let mut pos = 0;
             for c in b[1..].chunks_exact(3) {
                 match c {
-                    [a @ b'0'..=b'9', b @ b'0'..=b'9', b' ' | b'\n'] => {
-                        let num = (a - b'0') * 10 + (b - b'0');
-                        boards[i][pos as usize] = num;
-                        index[i][num as usize] = Some(pos);
+                    [x @ b'0'..=b'9', y @ b'0'..=b'9', b' ' | b'\n'] => {
+                        let bnum = (x - b'0') * 10 + (y - b'0');
+                        boards[i][usize::from(pos)] = bnum;
+                        index[i][usize::from(bnum)] = Some(pos);
                         pos += 1;
                     }
-                    [b' ', b @ b'0'..=b'9', b' ' | b'\n'] => {
-                        let num = b - b'0';
-                        boards[i][pos as usize] = num;
-                        index[i][num as usize] = Some(pos);
+                    [b' ', y @ b'0'..=b'9', b' ' | b'\n'] => {
+                        let bnum = y - b'0';
+                        boards[i][usize::from(pos)] = bnum;
+                        index[i][usize::from(bnum)] = Some(pos);
                         pos += 1;
                     }
                     _ => {
@@ -92,13 +92,13 @@ fn solve(
             for (i, pos) in index
                 .iter()
                 .enumerate()
-                .filter_map(|(i, r)| r[c as usize].map(|x| (i, x)))
+                .filter_map(|(i, r)| r[usize::from(c)].map(|x| (i, x)))
             {
                 if won[i] {
                     continue;
                 }
 
-                let pos = pos as usize;
+                let pos = usize::from(pos);
                 debug_assert!(boards[i][pos] == c);
                 called[i][pos] = true;
 
@@ -123,7 +123,7 @@ fn solve(
     boards[winner]
         .into_iter()
         .zip(called[winner].into_iter())
-        .filter(|(_, called)| !called)
+        .filter(|(_, c)| !c)
         .map(|(num, _)| Num::from(num))
         .sum::<Num>()
         * Num::from(last_call)

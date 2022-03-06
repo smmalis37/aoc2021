@@ -40,7 +40,7 @@ impl<'a> Solver<'a> for Day8 {
     fn part2(data: Self::Parsed) -> Self::Output {
         let mut sum = 0;
         for (digits, output) in data {
-            let mut map = [0u16; 10];
+            let mut map = [0_u16; 10];
 
             for (d, i) in digits.iter().zip(0..) {
                 match d.count_ones() {
@@ -53,13 +53,13 @@ impl<'a> Solver<'a> for Day8 {
             }
 
             for (d, i) in digits.iter().zip(0..) {
-                match (d ^ digits[map[1] as usize]).count_ones() {
+                match (d ^ digits[usize::from(map[1])]).count_ones() {
                     3 => map[3] = i,
                     6 => map[6] = i,
                     _ => {}
                 }
 
-                match (d ^ digits[map[4] as usize]).count_ones() {
+                match (d ^ digits[usize::from(map[4])]).count_ones() {
                     5 => map[2] = i,
                     2 if i != map[1] => map[9] = i,
                     _ => {}
@@ -67,7 +67,7 @@ impl<'a> Solver<'a> for Day8 {
             }
 
             for (d, i) in digits.iter().zip(0..) {
-                match (d ^ digits[map[6] as usize]).count_ones() {
+                match (d ^ digits[usize::from(map[6])]).count_ones() {
                     1 if i != map[8] => map[5] = i,
                     2 if i != map[9] => map[0] = i,
                     _ => {}
@@ -76,7 +76,10 @@ impl<'a> Solver<'a> for Day8 {
 
             let mut res = 0;
             for &o in &output {
-                let digit = map.iter().position(|&x| digits[x as usize] == o).unwrap();
+                let digit = map
+                    .iter()
+                    .position(|&x| digits[usize::from(x)] == o)
+                    .unwrap();
                 res = (res * 10) + digit;
             }
             sum += res;

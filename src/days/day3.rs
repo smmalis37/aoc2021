@@ -47,7 +47,7 @@ impl<'a> Solver<'a> for Day3 {
 
     fn part2((len, data): Self::Parsed) -> Self::Output {
         let mut line_count = 0;
-        let mut counts = vec![0u16; 1 << len];
+        let mut counts = vec![0_u16; 1 << len];
 
         for l in data {
             line_count += 1;
