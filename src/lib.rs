@@ -25,10 +25,10 @@
     clippy::pattern_type_mismatch,
     clippy::separated_literal_suffix,
     clippy::else_if_without_else,
+    clippy::default_numeric_fallback,
     // TODO fix these!
     clippy::unwrap_used,
     clippy::unreachable,
-    clippy::default_numeric_fallback
 )]
 
 pub mod days;
